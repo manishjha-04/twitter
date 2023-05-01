@@ -1,4 +1,5 @@
 import Sidebar from '@/components/Sidebar'
+import Feed from '@/components/Feed'
 import Head from 'next/head'
 
 
@@ -22,6 +23,8 @@ export default function Home() {
 
 
         {/* feed */}
+
+        <Feed />
 
         {/* widget  */}
 
