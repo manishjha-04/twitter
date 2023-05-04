@@ -1,6 +1,7 @@
 import Sidebar from '@/components/Sidebar'
 import Feed from '@/components/Feed'
 import Head from 'next/head'
+import Widgets from '@/components/Widgets'
 
 
 
@@ -27,6 +28,8 @@ export default function Home() {
         <Feed />
 
         {/* widget  */}
+
+        <Widgets/>
 
         {/* modal --pops up  */}
 
