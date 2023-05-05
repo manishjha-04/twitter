@@ -5,7 +5,7 @@ import Widgets from '@/components/Widgets'
 
 
 
-export default function Home() {
+export default function Home({newsResults}) {
   return (
     <div>
       <Head>
@@ -16,7 +16,7 @@ export default function Home() {
       </Head>
 
       {/* basically the maintag(a semantic tag) is used to show the main content of your site and also good for seo  */}
-      <main className="flex min-h-screen max-w-7xl mx-auto "> 
+      <main className="flex min-h-screen  mx-auto "> 
 
         {/* sidebar */}
 
@@ -29,7 +29,7 @@ export default function Home() {
 
         {/* widget  */}
 
-        <Widgets/>
+        <Widgets newsResults={newsResults.articles}/>
 
         {/* modal --pops up  */}
 
@@ -40,3 +40,20 @@ export default function Home() {
 
   )
 }
+
+
+// https://saurav.tech/NewsAPI/top-headlines/category/business/in.json 
+
+// server side rendering ...this rendering is be done inside Vercel only 
+export async function getServerSideProps(){
+
+  const newsResults = await fetch("https://saurav.tech/NewsAPI/top-headlines/category/business/in.json"
+  ).then((res)=> res.json());
+  return{
+    props:{
+      newsResults,
+    },
+  }
+
+}
+
