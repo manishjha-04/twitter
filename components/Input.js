@@ -1,9 +1,15 @@
 import { EmojiHappyIcon, PhotographIcon } from "@heroicons/react/solid";
+import { useSession,signOut } from "next-auth/react";
 
 export default function Input() {
+  const {data:session} = useSession();
+
   return (
+    <>
+    {session&&(
     <div className="flex border-b border-gray-200 p-3 space-x-3 " >
-              <img  src="https://media.licdn.com/dms/image/D4E03AQECgMo4BO2ehQ/profile-displayphoto-shrink_800_800/0/1682057605889?e=2147483647&v=beta&t=LlgYJh7rbwdqa3RXYxY5UaELob-JAAI11llwagnYKiM" 
+              <img  src={session.user.image}
+              onClick={signOut}
               alt="user-image"
               className="h-11 w-11 rounded-full cursor-pointer hover:brightness-95 " />
        {/* here divide-y could be  used to = Add borders between stacked elements using the divide-y-{width} utilities. */}
@@ -24,6 +30,8 @@ export default function Input() {
             </div>
         </div>
     </div>
+    )}
+    </>
 
   )
 }
