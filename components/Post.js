@@ -1,5 +1,6 @@
 import { DotsHorizontalIcon } from "@heroicons/react/outline";
 import { ChartBarIcon, ChatIcon, HeartIcon, ShareIcon, TrashIcon } from "@heroicons/react/outline";
+import Moment from "react-moment";
 
 // here we have destructured it in curly braces instead we can use props directly also 
 export default function Post({ post }) {
@@ -7,7 +8,7 @@ export default function Post({ post }) {
         <div className="flex p-3 cursor-pointer border-b border-gray-200">
             {/* user image  */}
 
-            <img className="h-11 2-11 rounded-full mr-4"  src={post.userImg} alt="user-img" />
+            <img className="h-11 2-11 rounded-full mr-4"  src={post.data().userImg} alt="user-img" />
 
             {/* right side of image */}
             <div>
@@ -17,11 +18,12 @@ export default function Post({ post }) {
                     {/* Post user info  */}
                     <div className="flex items-center  space-x-1 whitespace-nowrap">
 
-                        <h4 className="font-bold text-[15px] sm:text-[16px] hover:underline">{post.name}</h4>
+                        <h4 className="font-bold text-[15px] sm:text-[16px] hover:underline">{post.data().name}</h4>
 
-                        <span className="text-sm sm:text-[15px]">@{post.username} -</span>
+                        <span className="text-sm sm:text-[15px]">@{post.data().username} -</span>
+                        {/* The fromNow() method in Moment.js can be used to display a date or time as a relative time from now, such as "5 minutes ago" or "2 hours from now"  */}
 
-                        <span className="text-sm sm:text-[15px] hover:underline">{post.timestamp}</span>
+                        <span className="text-sm sm:text-[15px] hover:underline"><Moment fromNow>{post?.timestamp?.toDate()}</Moment></span>
 
                     </div>
 
@@ -33,12 +35,12 @@ export default function Post({ post }) {
 
                 {/* post text  */}
 
-                <p className="text-gray-800 text-[15px] sm:text-[16px] mb-2 ">{post.text}</p>
+                <p className="text-gray-800 text-[15px] sm:text-[16px] mb-2 ">{post.data().text}</p>
 
 
                 {/* post image  */}
 
-                <img className="rounded-2xl mr-2" src={post.img} alt=""/>
+                <img className="rounded-2xl mr-2" src={post.data().image} alt=""/>
 
                 {/* icons  */}
 

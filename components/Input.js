@@ -87,7 +87,7 @@ const addImageToPost = (e)=>{
            </div> 
            {selectedFile&&(<div className="relative"> 
            <XIcon onClick={()=>setSelectedFile(null)}
-            className="h-7 text-black absolute cursor-pointer shadow-md shadow-white rounded-full" />
+            className="h-7 border text-black absolute cursor-pointer shadow-md border-white m-1 rounded-full" />
            <img src={selectedFile} alt="selected-image" className={`${loading && "animate-pulse" }`} /> </div>)}
       {/* items-center will make the element centered vertically as well as from horizontal elements   */}
         <div className="flex  items-center justify-between pt-2.5">
