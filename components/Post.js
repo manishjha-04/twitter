@@ -1,4 +1,4 @@
-import { db } from "@/firebase";
+import { db, storage } from "@/firebase";
 import { DotsHorizontalIcon } from "@heroicons/react/outline";
 import {
   ChartBarIcon,
@@ -19,6 +19,7 @@ import { useEffect, useState } from "react";
 import Moment from "react-moment";
 import { HeartIcon as HeartIconFilled } from "@heroicons/react/solid";
 import signin from "@/pages/auth/signin";
+import { deleteObject, ref } from "firebase/storage";
 
 // here we have destructured it in curly braces instead we can use props directly also
 export default function Post({ post }) {
@@ -54,6 +55,21 @@ export default function Post({ post }) {
     else{
         signIn();
     }
+  }
+
+  async function deletePost() {
+
+    if(window.confirm("Are you sure you want to delete this post?")){
+      deleteDoc(doc(db, "posts", post.id));
+
+      if(post.data().image){
+        deleteObject(ref(storage, `posts/${post.id}/image`));
+
+      }
+
+    }
+
+    
   }
 
   return (
@@ -104,7 +120,11 @@ export default function Post({ post }) {
 
         <div className="flex justify-between text-gray-500 p-2">
           <ChatIcon className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100" />
-          <TrashIcon className="h-9 w-9 hoverEffect p-2  hover:bg-red-100" />
+          
+          {session?.user.uid === post.data().id&&
+
+          <TrashIcon onClick={deletePost} className="h-9 w-9 hoverEffect p-2  hover:bg-red-100" />
+          }
         <div className="flex items-center"> {hasLiked ? (
             <HeartIconFilled
               onClick={likePost}
