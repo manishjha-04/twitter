@@ -12,6 +12,7 @@
     "@heroicons/react": "^1.0.6",
     "auth": "^0.0.1",
     "firebase": "^10.0.0",
+    "framer-motion": "^10.13.0",
     "moment": "^2.29.4",
     "next": "^13.4.10",
     "next-auth": "^4.22.1",
