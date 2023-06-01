@@ -2,6 +2,7 @@ import Sidebar from '@/components/Sidebar'
 import Feed from '@/components/Feed'
 import Head from 'next/head'
 import Widgets from '@/components/Widgets'
+import CommentModal from '@/components/CommentModal'
 
 
 
@@ -32,6 +33,8 @@ export default function Home({newsResults,randomUserResults}) {
         <Widgets newsResults={newsResults.articles} randomUserResults={randomUserResults.results} />
 
         {/* modal --pops up  */}
+
+        <CommentModal />
 
       </main>
     </div>

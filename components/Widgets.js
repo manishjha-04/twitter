@@ -50,7 +50,7 @@ export default function Widgets({newsResults,randomUserResults}) {
                     </div>
                     </motion.div>
                     
-                ))}
+                ))} 
                 </AnimatePresence>
             </h4>
             <button onClick = {()=>setRandomUserNum(articleNumber+3)} className="text-blue-300 pl-4 pb-3 hover:text-blue-400">Show more</button>
