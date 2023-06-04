@@ -1,14 +1,116 @@
-import { useRecoilState } from "recoil"
-import {modalState} from "../atom/modalAtom"
+import { useRecoilState } from "recoil";
+import { modalState, postIdState } from "../atom/modalAtom";
+import Modal from "react-modal";
+import { EmojiHappyIcon, PhotographIcon, XIcon } from "@heroicons/react/solid";
+import { useEffect, useState } from "react";
+import { db } from "@/firebase";
+import { doc, onSnapshot } from "firebase/firestore";
+import Moment from "react-moment";
+import { useSession } from "next-auth/react";
 
 export default function CommentModal() {
+  const [open, setOpen] = useRecoilState(modalState);
+  const [postId] = useRecoilState(postIdState);
+  const [post, setPost] = useState({});
+  const [input, setInput] = useState("");
 
-    const [open,setOpen] = useRecoilState(modalState);
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    onSnapshot(doc(db, "posts", postId), (snapshot) => {
+      setPost(snapshot);
+    });
+  }, [postId, db]);
+
+  function sendComment() {}
 
   return (
     <div>
-      <h1>CommentModal</h1>
-      {open && <h1>the modal is open</h1>}
+      {/* onRequestClose is a function which is used to close the modal when we click outside the modal it is default in react-modal  */}
+      {open && (
+        <Modal
+          isOpen={open}
+          onRequestClose={() => setOpen(false)}
+          className="max-w-lg w-[90%]  absolute top-24 left-[50%] translate-x-[-50%] bg-white border-2 border-gray-200 rounded-xl shadow-md "
+        >
+          <div className="p-1">
+            <div className="border-b border-gray-200 py-2 px-1.5 ">
+              <div
+                onClick={() => setOpen(false)}
+                className="hoverEffect w-9 h-9 flex items-center justify-center"
+              >
+                <XIcon className="h-[22px] text-gray-700"></XIcon>
+              </div>
+            </div>
+            <div className="p-2 flex items-center space-x-1 relative">
+              <span className="w-0.5 h-dull z-[-1] absolute left-8 top-11 bg-gray-300 "></span>
+              <img
+                className="h-11 2-11 rounded-full mr-4"
+                // sometimes the data is delayed so we have to protect ourselve from that so we use optional chaining here that is putting question mark
+                src={post?.data()?.userImg}
+                alt="user-img"
+              />
+              <h4 className="font-bold text-[15px] sm:text-[16px] hover:underline">
+                {post?.data()?.name}
+              </h4>
+
+              <span className="text-sm sm:text-[15px]">
+                @{post?.data()?.username} -
+              </span>
+              {/* The fromNow() method in Moment.js can be used to display a date or time as a relative time from now, such as "5 minutes ago" or "2 hours from now"  */}
+
+              <span className="text-sm sm:text-[15px] hover:underline">
+                <Moment fromNow>{post?.data()?.timestamp?.toDate()}</Moment>
+              </span>
+            </div>
+            <p className="text-gray-500 text-[15px] sm:text-[16px] ml-16 mb-2">
+              {post?.data()?.text}
+            </p>
+
+            <div className="flex  p-3 space-x-3 ">
+              <img
+                src={session.user.image}
+                alt="user-image"
+                className="h-11 w-11 rounded-full cursor-pointer hover:brightness-95 "
+              />
+              {/* here divide-y could be  used to = Add borders between stacked elements using the divide-y-{width} utilities. */}
+
+              <div className="w-full divide-y divide-gray-200 ">
+                <div>
+                  <textarea
+                    className="w-full border-none focus:ring-0 text-lg placeholder-gray-700 tracking-wide min-h-[50px] text-gray-700"
+                    rows="2"
+                    placeholder="Tweet Your Reply"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                  ></textarea>
+                </div>
+
+                {/* items-center will make the element centered vertically as well as from horizontal elements   */}
+                <div className="flex  items-center justify-between pt-2.5">
+                  <div className="flex">
+                    <div
+                      className=""
+                      //  onClick={()=>filePickerRef.current.click()}
+                    >
+                      <PhotographIcon className="h-10 w-10 hoverEffect p-2 text-sky-500 hover:bg-sky-100" />
+                    </div>
+
+                    <EmojiHappyIcon className="h-10 w-10 hoverEffect p-2 text-sky-500 hover:bg-sky-100" />
+                  </div>
+                  <button
+                    onClick={sendComment}
+                    disabled={!input.trim()}
+                    className="bg-blue-400 text-white px-4 py-1.5 rounded-full font-bold shadow-md hover:brightness-95 disabled:opacity-50"
+                  >
+                    Reply
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
-  )
+  );
 }

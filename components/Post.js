@@ -21,7 +21,7 @@ import { HeartIcon as HeartIconFilled } from "@heroicons/react/solid";
 import signin from "@/pages/auth/signin";
 import { deleteObject, ref } from "firebase/storage";
 import { useRecoilState } from "recoil";
-import { modalState } from "@/atom/modalAtom";
+import { modalState, postIdState } from "@/atom/modalAtom";
 
 // here we have destructured it in curly braces instead we can use props directly also
 export default function Post({ post }) {
@@ -31,6 +31,13 @@ export default function Post({ post }) {
   const [hasLiked, setHasLikes] = useState(false);
 
   const [open, setOpen] = useRecoilState(modalState);
+  const [postId, setPostId] = useRecoilState(postIdState);
+
+
+  // to get data from fire base useEffect is used 
+  // here below after comma in square bracket the dependency is given so that when ever the dependency changes the useEffect will run again bsically that is functionality of useEffect 
+  
+
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -123,7 +130,13 @@ export default function Post({ post }) {
         {/* icons  */}
 
         <div className="flex justify-between text-gray-500 p-2">
-          <ChatIcon onClick={()=>setOpen(!open)} className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100" />
+          <ChatIcon onClick={()=>{
+            if(!session){
+              signIn();
+            }
+            else {
+            setPostId(post.id);
+            setOpen(!open);}}} className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100" />
           
           {session?.user.uid === post.data().id&&
 
