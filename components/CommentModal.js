@@ -1,10 +1,11 @@
 import { useRecoilState } from "recoil";
 import { modalState, postIdState } from "../atom/modalAtom";
+import { useRouter } from "next/router";
 import Modal from "react-modal";
 import { EmojiHappyIcon, PhotographIcon, XIcon } from "@heroicons/react/solid";
 import { useEffect, useState } from "react";
 import { db } from "@/firebase";
-import { doc, onSnapshot } from "firebase/firestore";
+import { addDoc, collection, doc, onSnapshot, serverTimestamp } from "firebase/firestore";
 import Moment from "react-moment";
 import { useSession } from "next-auth/react";
 
@@ -16,13 +17,27 @@ export default function CommentModal() {
 
   const { data: session } = useSession();
 
+//   here basically the const we are writing is the initialization of something here below let say we are initializing router with useRouter() and then we are using it in the code below
+    const router = useRouter();
+
   useEffect(() => {
     onSnapshot(doc(db, "posts", postId), (snapshot) => {
       setPost(snapshot);
     });
   }, [postId, db]);
 
-  function sendComment() {}
+  async function sendComment() {
+    await addDoc(collection(db, "posts", postId, "comments"),{comment:input,
+    name:session.user.name,
+username:session.user.username,
+userImg:session.user.image,
+timestamp:serverTimestamp(),})
+  
+setOpen(false);
+setInput("");
+router.push(`posts/${postId}`);
+  
+  }
 
   return (
     <div>
@@ -46,7 +61,7 @@ export default function CommentModal() {
               <span className="w-0.5 h-dull z-[-1] absolute left-8 top-11 bg-gray-300 "></span>
               <img
                 className="h-11 2-11 rounded-full mr-4"
-                // sometimes the data is delayed so we have to protect ourselve from that so we use optional chaining here that is putting question mark
+                // sometimes the data is delayed so we have to protect ourself from that so we use optional chaining here that is putting question mark
                 src={post?.data()?.userImg}
                 alt="user-img"
               />

@@ -33,16 +33,26 @@ export default function Post({ post }) {
   const [open, setOpen] = useRecoilState(modalState);
   const [postId, setPostId] = useRecoilState(postIdState);
 
+  // setting the  noSSR. of comment 
+  const [comments, setComments] = useState([]);
+
+
 
   // to get data from fire base useEffect is used 
   // here below after comma in square bracket the dependency is given so that when ever the dependency changes the useEffect will run again bsically that is functionality of useEffect 
-  
+
 
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
       collection(db, "posts", post.id, "likes"),
       (snapshot) => setLikes(snapshot.docs)
+    );
+  }, [db]);  
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(db, "posts", post.id, "comments"),
+      (snapshot) => setComments(snapshot.docs)
     );
   }, [db]);
 
@@ -94,7 +104,7 @@ export default function Post({ post }) {
       />
 
       {/* right side of image */}
-      <div>
+      <div className="flex-1 ">
         {/* Header   */}
         <div className="flex items-center justify-between">
           {/* Post user info  */}
@@ -130,6 +140,7 @@ export default function Post({ post }) {
         {/* icons  */}
 
         <div className="flex justify-between text-gray-500 p-2">
+        <div className="flex items-center select-none">
           <ChatIcon onClick={()=>{
             if(!session){
               signIn();
@@ -137,7 +148,8 @@ export default function Post({ post }) {
             else {
             setPostId(post.id);
             setOpen(!open);}}} className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100" />
-          
+          {comments.length>0 && <span className="text-sm">{comments.length} </span>}
+          </div>
           {session?.user.uid === post.data().id&&
 
           <TrashIcon onClick={deletePost} className="h-9 w-9 hoverEffect p-2  hover:bg-red-100" />
