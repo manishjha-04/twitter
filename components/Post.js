@@ -22,9 +22,10 @@ import signin from "@/pages/auth/signin";
 import { deleteObject, ref } from "firebase/storage";
 import { useRecoilState } from "recoil";
 import { modalState, postIdState } from "@/atom/modalAtom";
+import { useRouter } from "next/router";
 
 // here we have destructured it in curly braces instead we can use props directly also
-export default function Post({ post }) {
+export default function Post({ post,id }) {
   const { data: session } = useSession();
 
   const [likes, setLikes] = useState([]);
@@ -36,6 +37,8 @@ export default function Post({ post }) {
   // setting the  noSSR. of comment 
   const [comments, setComments] = useState([]);
 
+  const router = useRouter();
+
 
 
   // to get data from fire base useEffect is used 
@@ -45,13 +48,13 @@ export default function Post({ post }) {
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
-      collection(db, "posts", post.id, "likes"),
+      collection(db, "posts", id, "likes"),
       (snapshot) => setLikes(snapshot.docs)
     );
   }, [db]);  
   useEffect(() => {
     const unsubscribe = onSnapshot(
-      collection(db, "posts", post.id, "comments"),
+      collection(db, "posts", id, "comments"),
       (snapshot) => setComments(snapshot.docs)
     );
   }, [db]);
@@ -67,9 +70,9 @@ export default function Post({ post }) {
    if(session){
 
     if (hasLiked) {
-      await deleteDoc(doc(db, "posts", post.id, "likes", session?.user.uid));
+      await deleteDoc(doc(db, "posts", id, "likes", session?.user.uid));
     } else {
-      await setDoc(doc(db, "posts", post.id, "likes", session?.user.uid), {
+      await setDoc(doc(db, "posts", id, "likes", session?.user.uid), {
         username: session.user.username,
       });
     }}
@@ -81,12 +84,14 @@ export default function Post({ post }) {
   async function deletePost() {
 
     if(window.confirm("Are you sure you want to delete this post?")){
-      deleteDoc(doc(db, "posts", post.id));
+      deleteDoc(doc(db, "posts", id));
 
       if(post.data().image){
-        deleteObject(ref(storage, `posts/${post.id}/image`));
+        deleteObject(ref(storage, `posts/${id}/image`));
 
       }
+      router.push("/");
+
 
     }
 
@@ -99,7 +104,7 @@ export default function Post({ post }) {
 
       <img
         className="h-11 2-11 rounded-full mr-4"
-        src={post.data().userImg}
+        src={post?.data()?.userImg}
         alt="user-img"
       />
 
@@ -110,16 +115,16 @@ export default function Post({ post }) {
           {/* Post user info  */}
           <div className="flex items-center  space-x-1 whitespace-nowrap">
             <h4 className="font-bold text-[15px] sm:text-[16px] hover:underline">
-              {post.data().name}
+              {post?.data()?.name}
             </h4>
 
             <span className="text-sm sm:text-[15px]">
-              @{post.data().username} -
+              @{post?.data()?.username} -
             </span>
             {/* The fromNow() method in Moment.js can be used to display a date or time as a relative time from now, such as "5 minutes ago" or "2 hours from now"  */}
 
             <span className="text-sm sm:text-[15px] hover:underline">
-              <Moment fromNow>{post?.data().timestamp?.toDate()}</Moment>
+              <Moment fromNow>{post?.data()?.timestamp?.toDate()}</Moment>
             </span>
           </div>
 
@@ -130,12 +135,12 @@ export default function Post({ post }) {
         {/* post text  */}
 
         <p className="text-gray-800 text-[15px] sm:text-[16px] mb-2 ">
-          {post.data().text}
+          {post?.data()?.text}
         </p>
 
         {/* post image  */}
 
-        <img className="rounded-2xl mr-2" src={post.data().image} alt="" />
+        <img className="rounded-2xl mr-2" src={post?.data()?.image} alt="" />
 
         {/* icons  */}
 
@@ -146,13 +151,14 @@ export default function Post({ post }) {
               signIn();
             }
             else {
-            setPostId(post.id);
+            setPostId(id);
             setOpen(!open);}}} className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100" />
           {comments.length>0 && <span className="text-sm">{comments.length} </span>}
           </div>
-          {session?.user.uid === post.data().id&&
+          {session?.user.uid === post?.data()?.id&&
 
-          <TrashIcon onClick={deletePost} className="h-9 w-9 hoverEffect p-2  hover:bg-red-100" />
+          <TrashIcon 
+          onClick={deletePost} className="h-9 w-9 hoverEffect p-2  hover:bg-red-100" />
           }
         <div className="flex items-center"> {hasLiked ? (
             <HeartIconFilled
