@@ -5,7 +5,7 @@ import Post from '../../components/Post'
 import CommentModal from '../../components/CommentModal'
 import { ArrowLeftIcon } from '@heroicons/react/solid'
 import { useRouter } from 'next/router'
-import { doc, onSnapshot } from 'firebase/firestore'
+import { doc, onSnapshot, orderBy, query } from 'firebase/firestore'
 import { db } from '@/firebase'
 import { useEffect, useState } from 'react'
 import { Snapshot } from 'recoil'
@@ -18,7 +18,24 @@ export default function PostPage({newsResults,randomUserResults}) {
     const router = useRouter();
     const {id} = router.query;
     const [post,setPost] = useState();
+
+    // here below the initial value of comment is an empty array
+
+    const [comments,setComments] = useState([]);
+
+    //getting post data from firebase
+
+    // The onSnapshot() method is used to listen for changes to data in a Firebase Realtime Database or Cloud Firestore. When the data changes, the onSnapshot() method will be called with a DataSnapshot object that contains the new data.
+
     useEffect(() =>onSnapshot(doc(db,"posts",id),(snapshot)=>setPost(snapshot)),[db,id])
+
+    //getting comments data from firebase
+
+    useEffect (()=>{onSnapshot(query(collection(db,"posts",id,"comments"),
+    orderBy("timestamp",'desc'),(snapshot)=>setComments(snapshot.docs)
+    
+    ))},[db,id])
+
 
   return (
     <div>
@@ -53,6 +70,15 @@ export default function PostPage({newsResults,randomUserResults}) {
       </div>
 
       <Post id={id} post={post}/>
+      {comments.length>0  && (
+        
+        <div className=''>
+
+      {comments.map((comment)=>(
+        <Comment key={comment.id} id = {comment.id} comment={comment.data()} />
+      ))}
+      </div>
+      )}
 
     </div>
 
