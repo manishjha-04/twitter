@@ -5,9 +5,10 @@ import Post from '../../components/Post'
 import CommentModal from '../../components/CommentModal'
 import { ArrowLeftIcon } from '@heroicons/react/solid'
 import { useRouter } from 'next/router'
-import { doc, onSnapshot, orderBy, query } from 'firebase/firestore'
+import { collection, doc, onSnapshot, orderBy, query } from 'firebase/firestore'
 import { db } from '@/firebase'
 import { useEffect, useState } from 'react'
+import Comment from "../../components/Comment"
 import { Snapshot } from 'recoil'
 
 
@@ -21,7 +22,7 @@ export default function PostPage({newsResults,randomUserResults}) {
 
     // here below the initial value of comment is an empty array
 
-    const [comments,setComments] = useState([]);
+    const [comments, setComments] = useState([]);
 
     //getting post data from firebase
 
@@ -31,10 +32,11 @@ export default function PostPage({newsResults,randomUserResults}) {
 
     //getting comments data from firebase
 
-    useEffect (()=>{onSnapshot(query(collection(db,"posts",id,"comments"),
-    orderBy("timestamp",'desc'),(snapshot)=>setComments(snapshot.docs)
+    useEffect (()=>{onSnapshot(
+        query(collection(db,"posts",id,"comments"),
+    orderBy("timestamp","desc")),(snapshot)=>setComments(snapshot.docs)
     
-    ))},[db,id])
+    );},[db,id]);
 
 
   return (
@@ -70,13 +72,22 @@ export default function PostPage({newsResults,randomUserResults}) {
       </div>
 
       <Post id={id} post={post}/>
-      {comments.length>0  && (
+      {/* {comments.length > 0  && (
         
         <div className=''>
 
       {comments.map((comment)=>(
         <Comment key={comment.id} id = {comment.id} comment={comment.data()} />
-      ))}
+      ))} */}
+      {comments.length > 0 && (
+            <div className="">
+              {comments.map((comment) => (
+                <Comment
+                  key={comment.id}
+                  id={comment.id}
+                  comment={comment.data()}
+                />
+              ))}
       </div>
       )}
 
