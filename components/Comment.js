@@ -64,9 +64,9 @@ export default function Comment({ comment,commentId,originalPostId }) {
    if(session){
 
     if (hasLiked) {
-      await deleteDoc(doc(db, "posts",originalPostId,"comments",commentId, id, "likes", session?.user.uid));
+      await deleteDoc(doc(db, "posts",originalPostId,"comments",commentId,  "likes", session?.user.uid));
     } else {
-      await setDoc(doc(db, "posts",originalPostId,"comments",commentId, id, "likes", session?.user.uid), {
+      await setDoc(doc(db, "posts",originalPostId,"comments",commentId, "likes", session?.user.uid), {
         username: session.user.username,
       });
     }}
