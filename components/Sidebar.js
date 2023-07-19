@@ -27,9 +27,9 @@ export default function Sidebar() {
 
       <div className=" mt-4 mb-2.5 xl:items-start">
         <SidebarMenuItem text="Home" Icon={HomeIcon} active/>
-        <SidebarMenuItem text="Explore" Icon={HashtagIcon} />
 
-        {session&&(<>
+        {session?(<>
+        <SidebarMenuItem text="Explore" Icon={HashtagIcon} />
 
         <SidebarMenuItem text="Notifications" Icon={BellIcon} />
         <SidebarMenuItem text="Messages" Icon={InboxIcon} />
@@ -38,7 +38,8 @@ export default function Sidebar() {
         <SidebarMenuItem text="Profile" Icon={UserIcon} />
         <SidebarMenuItem text="More" Icon={DotsCircleHorizontalIcon} />
 </>
-        )}
+        ):       <button onClick={signIn}> <SidebarMenuItem  text="Explore" Icon={HashtagIcon} /></button>
+}
       </div>
 
 
